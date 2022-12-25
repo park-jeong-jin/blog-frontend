@@ -22,9 +22,11 @@ module.exports = {
   // add your custom rules here
   rules: {
     'quotes': ['error', 'single', { allowTemplateLiterals: true }],
+    'quote-props': 'off',
     'prefer-const': 'off',
     'generator-star-spacing': 'off',
     'no-debugger': 'error',
+    'no-useless-return': 'off',
     'object-shorthand': 'off',
     'vue/no-v-for-template-key': 'off',
     'vue/multi-word-component-names': 'off',

@@ -13,11 +13,8 @@ const getters = {
   [types.OPTIONS] (state, getters) {
     return state[types.OPTIONS]
   },
-  [types.CATEGORY_ITEM] (state, getters) {
-    return state[types.CATEGORY_ITEM]
-  },
-  [types.CATEGORY_ITEMS] (state, getters) {
-    return state[types.CATEGORY_ITEMS]
+  [types.PAGINATION] (state, getters) {
+    return state[types.PAGINATION]
   }
 }
 

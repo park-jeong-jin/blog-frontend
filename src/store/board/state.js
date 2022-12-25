@@ -1,25 +1,25 @@
+import constants from '@/plugins/constant'
 import types from './types'
 
 const state = {
   [types.PARAM]: {
+    menuId: null,
     page: 0,
     size: 5
-    // pageable: {
-    //   page: 0,
-    //   size: 5,
-    //   totalPages: 0,
-    //   totalElements: 0,
-    //   first: true,
-    //   last: true
-    // }
   },
   [types.ITEM]: {},
-  [types.ITEMS]: {},
+  [types.ITEMS]: [],
   [types.OPTIONS]: {
-    editMode: null
+    editMode: constants.editMode.empty
   },
-  [types.CATEGORY_ITEM]: {},
-  [types.CATEGORY_ITEMS]: []
+  [types.PAGINATION]: {
+    page: 0,
+    size: 5,
+    totalPages: 0,
+    totalElements: 0,
+    first: true,
+    last: true
+  }
 }
 
 export default state

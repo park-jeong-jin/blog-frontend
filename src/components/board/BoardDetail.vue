@@ -1,129 +1,110 @@
 <template>
-  <div class="board">
+  <section class="boardDetail">
     <div class="titleArea">
-      <div class="btnArea">
-        <button v-if="!isEdit" @click="onNew"> 신규</button>
+      <div v-if="$constant.role.isAdmin($_common_userRole)" class="btnArea">
+        <button v-if="!isEdit" @click="onCreate"> 신규</button>
         <button v-if="!isEdit && item.id !== null" @click="onUpdate"> 수정</button>
-        <button v-if="!isEdit && item.id !== null" @click="onRemove"> 삭제</button>
+        <button v-if="!isEdit && item.id !== null" @click="onDelete"> 삭제</button>
         <button v-if="isEdit" @click="onCancel"> 취소</button>
         <button v-if="isEdit" @click="onSave"> 저장</button>
       </div>
-      <label>제목</label>
-      <input v-if="isEdit" v-model="buffer.title" type="text">
-      <span v-if="!isEdit">{{ item.title }}</span>
+      <input v-if="isEdit" v-model="buffer.title" type="text" class="w100p">
+      <h1 v-else class="w100p title">{{ item.title || 'TITLE' }}</h1>
     </div>
-    <div class="contentArea">
-      <label>내용</label>
-      <editor-content v-if="isEdit" :editor="editor"/>
-      <span v-if="!isEdit">{{ item.content }}</span>
+    <div ref="contentArea" class="contentArea">
+      <editor v-if="isEdit" v-model="buffer.content" :editable="true"/>
+      <editor v-else v-model="item.content" :editable="false"/>
     </div>
-    <comment v-show="!isEdit && item.id" ref="comment" :props-board="item.id"/>
-  </div>
+    <comment v-if="!isEdit && item.id" ref="comment" :props-board="item.id"/>
+  </section>
 </template>
 
 <script>
-import { Editor, EditorContent } from '@tiptap/vue-3'
-import StaterKit from '@tiptap/starter-kit'
-import comment from '../Comment'
+import { mapActions, mapGetters } from '@/store/board/store'
+import types from '@/store/board/types'
 
-import api from '../../server/boardApi'
+import commonMixin from '@/mixin/commonMixin'
+import utilMixin from '@/mixin/utilMixin'
+
+import editor from '../global/Editor'
+import comment from './Comment'
 
 export default {
   name: 'BoardDetail',
   components: {
-    EditorContent,
+    editor,
     comment
   },
+  mixins: [commonMixin, utilMixin],
   data () {
     return {
-      editor: null,
-      mode: 'VIEW',
-      item: {
-        id: null,
-        title: null,
-        content: null,
-        comments: []
-      },
       buffer: {
         id: null,
         title: null,
-        content: null
+        content: null,
+        menuId: null
       }
     }
   },
   computed: {
-    isEdit () {
-      return this.mode === 'EDIT' || this.mode === 'UPDATE'
+    ...mapGetters({
+      item: types.ITEM,
+      option: types.OPTIONS
+    }),
+    isEdit () { return this.$constant.editMode.isEdit(this.option.editMode) },
+    content: {
+      get () { return this.$constant.editMode.isRead(this.option.editMode) ? this.item.content : this.buffer.content },
+      set (value) { this.buffer.content = value }
     }
   },
-  mounted () {
-    this.editor = new Editor({
-      content: '',
-      extensions: [
-        StaterKit
-      ]
-    })
-  },
-  beforeUnmount () {
-    this.editor?.destroy()
-  },
   methods: {
+    ...mapActions({
+      setOptions: types.SET_OPTIONS,
+      saveItem: types.SAVE_ITEM,
+      deleteItem: types.DELETE_ITEM
+    }),
     onClear () {
-      this.mode = 'VIEW'
-      Object.keys(this.item).forEach(key => {
-        this.item[key] = null
-      })
-      Object.keys(this.buffer).forEach(key => {
-        this.buffer[key] = null
-      })
-    },
-    onSearch (id) {
-      api.queryId({ id }).then((result) => {
-        this.item = result.data
-        this.$refs.comment.setItems(this.item.comments)
-      })
+      this.setOptions({ editMode: this.$constant.editMode.empty })
+      Object.keys(this.buffer).forEach(key => { this.buffer[key] = null })
     },
     onSave () {
-      switch (this.mode) {
-        case 'NEW':
-          api.save(this.buffer).then((result) => {
-            this.$emit('saved')
-            this.onClear()
-            this.onSearch(result.data)
-          })
-          break
-        case 'UPDATE':
-          api.save(this.buffer).then((result) => {
-            this.$emit('saved')
-            this.onClear()
-            this.onSearch(result.data)
-          })
-          break
+      this.$_common_setLoading(1)
+      try {
+        this.saveItem(this.buffer).then((res) => {
+          this.onClear()
+          this.$emit('saved', { id: res.data })
+        })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.$_common_setLoading(-1)
       }
     },
-    onNew () {
-      Object.keys(this.buffer).forEach(key => {
-        this.buffer[key] = null
-      })
-      this.mode = 'NEW'
+    onCreate () {
+      Object.keys(this.buffer).forEach(key => { this.buffer[key] = null })
+      this.buffer.menuId = this.$route.params.menuId
+      this.setOptions({ editMode: this.$constant.editMode.create })
     },
     onUpdate () {
-      Object.keys(this.buffer).forEach(key => {
-        this.buffer[key] = null
-      })
-      Object.keys(this.item).forEach(key => {
-        this.buffer[key] = this.item[key]
-      })
-      this.mode = 'UPDATE'
+      this.buffer = this.$utils.cloneDeep(this.item)
+      this.setOptions({ editMode: this.$constant.editMode.update })
     },
-    onRemove () {
-      api.delete(this.item).then(() => {
-        this.$emit('saved')
-        this.onClear()
-      })
+    onDelete () {
+      this.setOptions({ editMode: this.$constant.editMode.delete })
+      this.$_common_setLoading(1)
+      try {
+        this.deleteItem(this.item).then((res) => {
+          this.onClear()
+          this.$emit('deleted')
+        })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.$_common_setLoading(-1)
+      }
     },
     onCancel () {
-      this.mode = 'VIEW'
+      this.setOptions({ editMode: this.item?.id ? this.$constant.editMode.read : this.$constant.editMode.empty })
     }
   }
 }

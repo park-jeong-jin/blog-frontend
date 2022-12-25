@@ -17,16 +17,16 @@
             <span>{{ item.content }}</span>
             <button @click="item.isEdit = !item.isEdit">대댓글</button>
           </th>
-          <td style="text-align: center">
+          <td class="tc">
             {{ item.writer || 'Admin' }}
           </td>
         </tr>
         <tr v-if="item.isEdit">
           <td>
-            <input v-model="buffer.content" type="text">
+            <input type="text">
           </td>
           <td>
-            <button @click="(e) => onSaveSub(e, item.id)">저장</button>
+            <button @click="(e) => onSaveSub(e, item)">저장</button>
           </td>
         </tr>
         <template v-for="(child, cIndex) in item.children" :key="index + '_' + cIndex">
@@ -35,14 +35,14 @@
               <span>{{ child.content }}</span>
               <button @click="item.isEdit = !item.isEdit">대댓글</button>
             </th>
-            <td style="text-align: center">{{ item.writer || 'Admin' }}</td>
+            <td class="tc">{{ item.writer || 'Admin' }}</td>
           </tr>
           <tr v-if="child.isEdit">
             <td>
               <input type="text">
             </td>
             <td>
-              <button @click="(e) => onSaveSub(e, child.id)">저장</button>
+              <button @click="(e) => onSaveSub(e, child)">저장</button>
             </td>
           </tr>
         </template>
@@ -62,18 +62,16 @@
 </template>
 
 <script>
-import api from '../server/commentApi'
+import commonMixin from '@/mixin/commonMixin'
+
+import api from '../../server/commentApi'
 
 export default {
   name: 'Comment',
   components: {},
+  mixins: [commonMixin],
   props: {
-    propsBoard: {
-      type: Number,
-      default () {
-        return 0
-      }
-    }
+    propsBoard: { type: Number, default: 0 }
   },
   data () {
     return {
@@ -97,9 +95,9 @@ export default {
         this.onSearch()
       })
     },
-    onSaveSub (e, parentId) {
+    onSaveSub (e, item) {
       const input = e.target.closest('tr').querySelector('input[type=text]')
-      const param = { boardId: this.propsBoard, parentId: parentId, content: input.value }
+      const param = { boardId: this.propsBoard, parentId: item.id, content: input.value }
       api.create(param).then(() => {
         this.onSearch()
       })

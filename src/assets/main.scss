@@ -1,0 +1,266 @@
+#app {
+  header {
+    > :not(:first-child) {
+      padding-left: 4px;
+    }
+
+    > :not(:last-child) {
+      padding-right: 4px;
+    }
+
+    > :last-child {
+      position: absolute;
+      right: 0;
+    }
+  }
+
+  .router-link {
+    text-decoration-line: none;
+    text-decoration-color: white;
+
+    &.home {
+      font-weight: bold;
+    }
+
+    &:visited {
+      color: $text_color;
+    }
+  }
+
+  .contentArea {
+    height: 100%;
+    width: 100%;
+  }
+
+  nav {
+    transition: all 100ms ease-in-out;
+
+    &.slide {
+      position: fixed;
+      float: left;
+      background-color: $sub-color2;
+
+      &.on {
+        left: 0;
+      }
+
+      &.off {
+        left: -$menu_width;
+      }
+    }
+
+    ul {
+      padding-left: 0px;
+      margin: 0;
+
+      li {
+        user-select: none;
+        list-style-type: none;
+
+        > ul {
+          padding-left: 14px;
+        }
+
+        > span.menu {
+          padding-left: 16px;
+          background-repeat: no-repeat;
+          background-position: left;
+
+          &.on {
+            text-indent: 16px;
+            background-image: url("@/assets/arrow-down-s-fill.svg");
+          }
+
+          &.off {
+            text-indent: 16px;
+            background-image: url("@/assets/arrow-right-s-fill.svg");
+          }
+        }
+      }
+    }
+  }
+
+  nav.slide + .content {
+    width: 100%;
+  }
+
+  .preview {
+    min-height: 40px;
+  }
+
+  .board {
+    .editor {
+      min-height: 200px;
+
+      button {
+        width: 22px;
+        height: 22px;
+        text-indent: -999px;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      button.bold {
+        background-image: url("@/assets/tiptap/bold.svg");
+      }
+
+      button.italic {
+        background-image: url("@/assets/tiptap/italic.svg");
+      }
+
+      button.strike {
+        background-image: url("@/assets/tiptap/strikethrough.svg");
+      }
+
+      button.code {
+        background-image: url("@/assets/tiptap/code-view.svg");
+      }
+
+      button.h1 {
+        background-image: url("@/assets/tiptap/h-1.svg");
+      }
+
+      button.h2 {
+        background-image: url("@/assets/tiptap/h-2.svg");
+      }
+
+      button.h3 {
+        background-image: url("@/assets/tiptap/h-3.svg");
+      }
+
+      button.h4 {
+        background-image: url("@/assets/tiptap/h-4.svg");
+      }
+
+      button.h5 {
+        background-image: url("@/assets/tiptap/h-5.svg");
+      }
+
+      button.h6 {
+        background-image: url("@/assets/tiptap/h-6.svg");
+      }
+
+      button.paragraph {
+        background-image: url("@/assets/tiptap/paragraph.svg");
+      }
+
+      button.bulletList {
+        background-image: url("@/assets/tiptap/list-check.svg");
+      }
+
+      button.orderedList {
+        background-image: url("@/assets/tiptap/list-ordered.svg");
+      }
+
+      button.codeBlock {
+        background-image: url("@/assets/tiptap/code-box-line.svg");
+      }
+
+      button.blockquote {
+        background-image: url("@/assets/tiptap/double-quotes-l.svg");
+      }
+
+      button.horizontalRule {
+        background-image: url("@/assets/tiptap/separator.svg");
+      }
+
+      button.text-wrap {
+        background-image: url("@/assets/tiptap/text-wrap.svg");
+      }
+
+      button.undo {
+        background-image: url("@/assets/tiptap/arrow-go-back-line.svg");
+      }
+
+      button.redo {
+        background-image: url("@/assets/tiptap/arrow-go-forward-line.svg");
+      }
+    }
+  }
+
+  .titleArea {
+    min-height: 24px;
+
+    > .title {
+      margin: auto 0.3rem;
+    }
+  }
+
+  .btnArea {
+    display: inline-block;
+    float: right;
+  }
+
+  table.list {
+    width: calc(100% - 0.2rem);
+    margin: 0.1rem;
+    border: 1px solid $border-color1;
+    border-radius: 0.3rem;
+    border-spacing: 3px;
+
+    > thead > tr > th,
+    > thead > tr > td {
+      font-size: small;
+      font-weight: bold;
+      border-bottom: 1px solid $border-color1;
+    }
+
+    > tbody > tr,
+    > tbody > tr {
+      > th,
+      > td {
+        font-size: small;
+        font-weight: normal;
+      }
+
+      > th:not(:last-child),
+      > td:not(:last-child) {
+        border-right: 1px solid $border-color1;
+      }
+    }
+  }
+
+  .pagination {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    > button {
+      min-width: 22px;
+      height: 22px;
+
+      &.active {
+        background-color: $_active_color;
+      }
+
+      &.bgOnly {
+        background-repeat: no-repeat;
+        background-position: center;
+        text-indent: -999px;
+        overflow: hidden;
+      }
+
+      &.left {
+        background-image: url("@/assets/arrow-left-s-line.svg");
+      }
+
+      &.left2 {
+        background-image: url("@/assets/arrow-left-left-s-line.svg");
+      }
+
+      &.right {
+        background-image: url("@/assets/arrow-right-s-line.svg");
+      }
+
+      &.right2 {
+        background-image: url("@/assets/arrow-right-right-s-line.svg");
+      }
+    }
+  }
+
+  .title {
+    font-size: large;
+    font-weight: bold;
+  }
+}

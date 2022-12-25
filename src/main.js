@@ -2,19 +2,13 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import axios from 'axios'
 import lodash from 'lodash'
-import store from '@/store/store'
+import store from '@/store/index'
 import router from '@/router/router'
 import constant from '@/plugins/constant'
 import utils from '@/plugins/utils'
-
-import Modal from '@/components/Modal'
-
-require('@/assets/main.css')
+import globalComponents from '@/plugins/globalComponents'
 
 const app = createApp(App)
-
-// components
-app.component('Modal', Modal)
 
 // axios
 axios.interceptors.request.use(
@@ -37,5 +31,7 @@ app.config.globalProperties.axios = axios
 app.config.globalProperties._ = lodash
 app.config.globalProperties.$utils = utils
 app.config.globalProperties.$constant = constant
+
+app.use(globalComponents)
 app.use(store)
 app.use(router).mount('#app')

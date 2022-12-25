@@ -1,22 +1,28 @@
 import _ from 'lodash'
 
 export default {
+  debounce (func, delay) {
+    return _.debounce(func, delay)
+  },
+  throttle (func, delay) {
+    return _.throttle(func, delay)
+  },
   clear (object) {
     // _.clear(object)
   },
-  copyTo (from, to) {
-    if (to === undefined || to === null) {
-      to = _.cloneDeep(from)
-    } else {
-      Object.keys(from).forEach(key => {
-        to[key] = _.cloneDeep(from[key])
-      })
-    }
+  cloneDeep (item) {
+    return _.cloneDeep(item)
   },
-  copyToPaging (from, to) {
-    const keys = ['page', 'size']
-    keys.forEach(key => {
-      to[key] = _.cloneDeep(from[key])
-    })
+  convertPagination (item) {
+    const copyKeys = ['page', 'size', 'totalPages', 'totalElements', 'first', 'last']
+    let result = {}
+    for (const key of copyKeys) {
+      result[key] = item[key]
+    }
+    const copyReplaceKeys = [{ origin: 'page', replace: 'number' }]
+    for (const key of copyReplaceKeys) {
+      result[key.origin] = item[key.origin] || item[key.replace]
+    }
+    return result
   }
 }

@@ -1,21 +1,12 @@
 <template>
-  <div class="category">
-    <CategoryItem
-      v-for="(item, index) in categoryItems"
-      :key="index"
-      :props-data="item"
-      @click="onClickCategory"
-    />
-  </div>
-  <div class="board">
-    <board-preview
-      ref="boardPreview"
-    />
-    <board-detail
-      ref="boardDetail"
-    />
+  <div v-bind:="$attrs" class="board" style="min-height: 100%;">
+    <board-detail ref="boardDetail" @saved="onSearch" @deleted="onSearchItems"/>
     <board-list
       ref="boardList"
+      :props-data="items"
+      :props-pagination="pagination"
+      @select-item="onSearch"
+      @select-page="onSelectPage"
     />
   </div>
 </template>
@@ -24,43 +15,76 @@
 import { mapActions, mapGetters } from '@/store/board/store'
 import types from '@/store/board/types'
 
-import CategoryItem from '@/components/CategoryItem'
-import BoardPreview from '@/components/board/BoardPreview'
+import commonMixin from '@/mixin/commonMixin'
+import utilMixin from '@/mixin/utilMixin'
+
 import BoardDetail from '@/components/board/BoardDetail'
 import BoardList from '@/components/board/BoardList'
 
 export default {
   name: 'Board',
   components: {
-    CategoryItem,
-    BoardPreview,
     BoardDetail,
     BoardList
   },
+  mixins: [commonMixin, utilMixin],
   data () {
     return {}
   },
   computed: {
     ...mapGetters({
-      categoryItem: types.CATEGORY_ITEM,
-      categoryItems: types.CATEGORY_ITEMS
+      param: types.PARAM,
+      item: types.ITEM,
+      items: types.ITEMS,
+      pagination: types.PAGINATION
     })
   },
-  mounted () {
-    this.queryCategoryItems()
+  watch: {
+    '$route.params.menuId' (newValue, oldValue) {
+      this.setParam({ ...this.param, menuId: newValue })
+      this.onSearchItems()
+    }
+  },
+  created () {
+    this.setParam({ ...this.param, menuId: this.$route.params.menuId })
+    this.onSearchItems()
   },
   methods: {
     ...mapActions({
+      clearItem: types.CLEAR_ITEM,
       clearItems: types.CLEAR_ITEMS,
       setParam: types.SET_PARAM,
-      setCategoryItem: types.SET_CATEGORY_ITEM,
+      queryItem: types.QUERY_ITEM,
       queryItems: types.QUERY_ITEMS,
-      queryCategoryItems: types.QUERY_CATEGORY_ITEMS
+      saveItem: types.SAVE_ITEM
     }),
-    onClickCategory (item) {
-      this.setCategoryItem(item)
-      this.clearItems()
-      this.queryItems()
+    onSearch (item) {
+      this.$_common_setLoading(1)
+      try {
+        this.queryItem(item)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.$_common_setLoading(-1)
+      }
+    },
+    onSearchItems () {
+      this.$_common_setLoading(1)
+      try {
+        this.clearItem()
+        this.clearItems()
+        this.queryItems().then((res) => {
+          if (!this.item.id && this.items.length > 0) this.onSearch(this.items[0])
+        })
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.$_common_setLoading(-1)
+      }
+    },
+    onSelectPage (page) {
+      this.setParam({ ...this.param, page: page })
+      this.onSearchItems()
     }
   }
 }

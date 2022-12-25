@@ -1,4 +1,4 @@
-const {defineConfig} = require('@vue/cli-service')
+const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   devServer: {
     proxy: {
@@ -6,7 +6,20 @@ module.exports = defineConfig({
         target: 'http://localhost:3308',
         changeOrigin: true,
         logLevel: 'debug',
-        pathRewrite: {'^/api': '/'}
+        pathRewrite: { '^/api': '/' }
+      },
+      '/chat': {
+        target: 'http://localhost:3308',
+        changeOrigin: true,
+        logLevel: 'debug',
+        pathRewrite: { '^/chat': '/' }
+      }
+    }
+  },
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `@import "@/assets/_variabled.scss";`
       }
     }
   },

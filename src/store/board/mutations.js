@@ -1,6 +1,9 @@
 import types from './types'
 
 const mutations = {
+  [types.MU_SET_PARAM] (state, payload) {
+    state[types.PARAM] = payload
+  },
   [types.MU_SET_ITEM] (state, payload) {
     state[types.ITEM] = payload
   },
@@ -10,11 +13,8 @@ const mutations = {
   [types.MU_SET_OPTIONS] (state, payload) {
     state[types.OPTIONS] = payload
   },
-  [types.MU_SET_CATEGORY_ITEM] (state, payload) {
-    state[types.CATEGORY_ITEM] = payload
-  },
-  [types.MU_SET_CATEGORY_ITEMS] (state, payload) {
-    state[types.CATEGORY_ITEMS] = payload
+  [types.MU_SET_PAGINANTION] (state, payload) {
+    state[types.PAGINATION] = payload
   }
 }
 
