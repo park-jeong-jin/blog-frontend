@@ -128,18 +128,21 @@ export default {
       this.originItem = this.$_util_cloneDeep(this.selectItem)
       this.editMode = this.$constant.editMode.update
     },
-    onDelete (item) {
-      if (item.id === null) {
-        this.buffer.splice(this.buffer.findIndex(temp => temp === item), 1)
-        return
+    onDelete () {
+      if (this.$constant.editMode.isEdit(this.editMode)) {
+        switch (this.editMode) {
+          case this.$constant.editMode.create:
+            this.originItem.splice(this.originItem.findIndex(item => item.id === this.originItem), 1)
+            return
+        }
       }
       this.$refs.Alert.onShow(this.$constant.message.isDelete, { buttons: [this.$constant.confirm.no, this.$constant.confirm.yes] }).then(async (res) => {
         switch (res) {
           case this.$constant.confirm.yes:
             this.$_common_setLoading(1)
             try {
-              await menuApi.delete(item)
-              this.buffer.splice(this.buffer.findIndex(temp => temp === item), 1)
+              await menuApi.delete(this.selectItem)
+              this.onSelect()
             } catch (e) {
               console.error(e)
             } finally {
@@ -180,9 +183,13 @@ export default {
 .list {
   width: 140px;
   border: 1px solid white;
-  padding: 4px;
   margin-right: 5px;
   display: inline-grid;
+
+  > ul {
+    padding-left: 25px;
+    margin: 0;
+  }
 }
 
 .form {

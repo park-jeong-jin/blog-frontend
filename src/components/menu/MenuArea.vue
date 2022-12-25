@@ -6,7 +6,7 @@
         <span :class="['menu']"><router-link class="menu" to="/about">About</router-link></span>
       </li>
       <li v-if="$constant.role.isAdmin($_common_userRole)">
-        <span :class="['menu']"><router-link class="setting" to="/setting">Setting</router-link></span>
+        <span :class="['menu']"><router-link class="setting" to="/setting">설정</router-link></span>
       </li>
     </ul>
   </nav>

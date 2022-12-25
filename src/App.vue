@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/reset.css';
+//@import '@/assets/reset.css';
 @import '@/assets/main.scss';
 @import '@/assets/common.scss';
 </style>

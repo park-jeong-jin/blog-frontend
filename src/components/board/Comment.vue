@@ -15,25 +15,15 @@
         <tr>
           <th style="text-align: left;">
             <span>{{ item.content }}</span>
-            <button @click="item.isEdit = !item.isEdit">대댓글</button>
           </th>
           <td class="tc">
             {{ item.writer || 'Admin' }}
           </td>
         </tr>
-        <tr v-if="item.isEdit">
-          <td>
-            <input type="text">
-          </td>
-          <td>
-            <button @click="(e) => onSaveSub(e, item)">저장</button>
-          </td>
-        </tr>
-        <template v-for="(child, cIndex) in item.children" :key="index + '_' + cIndex">
+        <template v-for="(child, cIndex) in item.children || []" :key="index + '_' + cIndex">
           <tr>
             <th style="text-align: left;">
               <span>{{ child.content }}</span>
-              <button @click="item.isEdit = !item.isEdit">대댓글</button>
             </th>
             <td class="tc">{{ item.writer || 'Admin' }}</td>
           </tr>
